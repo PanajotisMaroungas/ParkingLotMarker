@@ -34,6 +34,7 @@ class Location						: NSObject, NSCoding {
 
 	required init?(coder decoder: NSCoder) {
 
+		
 		let latitude 					= decoder.decodeDoubleForKey(PKLLocationKeys.Latitude.rawValue)
 		let longitude 					= decoder.decodeDoubleForKey(PKLLocationKeys.Longitude.rawValue)
 		self.address 					= decoder.decodeObjectForKey(PKLLocationKeys.Address.rawValue) as? String
@@ -53,7 +54,6 @@ class Location						: NSObject, NSCoding {
 				encoder.encodeDouble(latitude, forKey: PKLLocationKeys.Latitude.rawValue)
 				encoder.encodeDouble(longitude, forKey: PKLLocationKeys.Longitude.rawValue)
 		}
-
 		encoder.encodeObject(self.address, forKey: PKLLocationKeys.Address.rawValue)
 		encoder.encodeObject(self.streetNumber, forKey: PKLLocationKeys.StreetNumber.rawValue)
 		encoder.encodeObject(self.city, forKey: PKLLocationKeys.City.rawValue)
@@ -64,7 +64,6 @@ class Location						: NSObject, NSCoding {
 
 	func reset() {
 
-		self.coordinates 				= nil
 		self.address 					= nil
 		self.streetNumber 				= nil
 		self.city 						= nil

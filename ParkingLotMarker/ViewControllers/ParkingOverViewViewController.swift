@@ -34,6 +34,8 @@ class ParkingOverViewViewController: UIViewController, CLLocationManagerDelegate
 		self.navigationItem.hidesBackButton = true
 		self.navigationController?.navigationItem.leftBarButtonItem = nil
 
+		self.navigationController?.navigationItem.backBarButtonItem = nil
+
 		self.mapView?.delegate = self
         self.labelAddress?.adjustsFontSizeToFitWidth = true
         self.labelAddress?.text = Utils.humanReadableParkingLocation()
@@ -47,6 +49,7 @@ class ParkingOverViewViewController: UIViewController, CLLocationManagerDelegate
         parkingAnnotation.coordinate = (Parking.sharedInstance.parkingLocation?.coordinates) ?? CLLocationCoordinate2D.init()
         parkingAnnotation.title = "Parking Plot"
         self.mapView?.addAnnotation(parkingAnnotation)
+
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -99,47 +102,52 @@ class ParkingOverViewViewController: UIViewController, CLLocationManagerDelegate
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
-        let currentLocation 			= locations.last
         let directionsRequest 			= MKDirectionsRequest()
-        let parkingPlaceAsPlaceMark 	= MKPlacemark(coordinate: Parking.sharedInstance.parkingLocation!.coordinates!, addressDictionary: nil)
-        let currentPlaceAsPlaceMark 	= MKPlacemark(coordinate: currentLocation!.coordinate, addressDictionary: nil)
-        directionsRequest.source 		= MKMapItem(placemark: parkingPlaceAsPlaceMark)
-        directionsRequest.destination 	= MKMapItem(placemark: currentPlaceAsPlaceMark)
-        directionsRequest.transportType = MKDirectionsTransportType.Walking
-        let directions 					= MKDirections(request: directionsRequest)
-        
-        directions.calculateDirectionsWithCompletionHandler { (response, error) -> Void in
-            if error == nil && response!.routes.count > 0 {
-                self.mapView?.removeOverlays(self.mapView!.overlays)
-                self.route = response!.routes[0]
-                for step in response!.routes {
-					self.mapView?.addOverlay(step.polyline)
-                    
-                }
-                self.mapView?.addOverlay((self.route?.polyline)!)
-                let distanceInMetersAsString = String(format: "%.0f meters", self.route!.distance)
-                self.labelDistanceInM?.text = distanceInMetersAsString
-                let timeInSeconds = Int((self.route?.expectedTravelTime)!)
-                let minAsInt = Int(timeInSeconds/60)
 
-                if minAsInt > 60 {
-                    let hourAsInt = Int(minAsInt/60)
-                    self.labelDistanceInMin?.text = String(hourAsInt) + " hour " + String(minAsInt%60) + " min"
-                    self.currentDistanceInHours = hourAsInt
-					self.currentDistanceInMinutes = minAsInt%60
-                } else {
-                    self.labelDistanceInMin?.text = String(minAsInt) + " min"
-                    self.currentDistanceInHours = 0
-                    self.currentDistanceInMinutes = minAsInt%60
-                }
-            }
-        }
-    }
-    
+		if let coordinates = Parking.sharedInstance.parkingLocation?.coordinates,
+			currentLocation = locations.last {
+
+			let parkingPlaceAsPlaceMark 	= MKPlacemark(coordinate: coordinates, addressDictionary: nil)
+
+			let currentPlaceAsPlaceMark 	= MKPlacemark(coordinate: currentLocation.coordinate, addressDictionary: nil)
+			directionsRequest.source 		= MKMapItem(placemark: parkingPlaceAsPlaceMark)
+			directionsRequest.destination 	= MKMapItem(placemark: currentPlaceAsPlaceMark)
+			directionsRequest.transportType = MKDirectionsTransportType.Walking
+			let directions 					= MKDirections(request: directionsRequest)
+
+			directions.calculateDirectionsWithCompletionHandler { (response, error) -> Void in
+				if error == nil && response!.routes.count > 0 {
+					self.mapView?.removeOverlays(self.mapView!.overlays)
+					self.route = response!.routes[0]
+					for step in response!.routes {
+						self.mapView?.addOverlay(step.polyline)
+
+					}
+					self.mapView?.addOverlay((self.route?.polyline)!)
+					let distanceInMetersAsString = String(format: "%.0f meters", self.route!.distance)
+					self.labelDistanceInM?.text = distanceInMetersAsString
+					let timeInSeconds = Int((self.route?.expectedTravelTime)!)
+					let minAsInt = Int(timeInSeconds/60)
+
+					if minAsInt > 60 {
+						let hourAsInt = Int(minAsInt/60)
+						self.labelDistanceInMin?.text = String(hourAsInt) + " hour " + String(minAsInt%60) + " min"
+						self.currentDistanceInHours = hourAsInt
+						self.currentDistanceInMinutes = minAsInt%60
+					} else {
+						self.labelDistanceInMin?.text = String(minAsInt) + " min"
+						self.currentDistanceInHours = 0
+						self.currentDistanceInMinutes = minAsInt%60
+					}
+				}
+			}
+		}
+	}
+
     // MARK: Actions
-    
+
     @IBAction func zoomInAndOut(sender: AnyObject) {
-    
+
      	let recognizer = sender as! UIPinchGestureRecognizer
         if (recognizer.state == UIGestureRecognizerState.Began) {
             self.originalRegionForZooming = self.mapView?.region;
@@ -165,6 +173,7 @@ class ParkingOverViewViewController: UIViewController, CLLocationManagerDelegate
             
             self.locationManager.stopUpdatingLocation()
             self.timer?.invalidate()
+			Parking.sharedInstance.reset()
             Parking.sharedInstance.parkingTime = nil
             Parking.sharedInstance.parkingLeavingTime = nil
             Parking.sharedInstance.parkingLocation?.reset()

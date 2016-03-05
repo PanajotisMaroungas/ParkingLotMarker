@@ -80,6 +80,7 @@ class TimerViewController						: UIViewController {
             
             Parking.sharedInstance.parkingLeavingTime = dateFormatter.stringFromDate(leavingTimeAsDate)
         }
+		Parking.sharedInstance.parkingActive = true
         Parking.sharedInstance.persistParking()
     }
 

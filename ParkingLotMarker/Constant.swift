@@ -24,6 +24,7 @@ enum PKLParkingKeys 					: String {
 	case ParkingLocation				= "parkingLocation"
 	case ParkingTime					= "parkingTime"
 	case ParkingLeavingTime				= "parkingLeavingTime"
+	case ParkingActive					= "parkingActive"
 }
 
 enum PKLLocationKeys					: String {

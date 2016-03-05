@@ -44,10 +44,20 @@ class ParkingLotMainScreen: UIViewController, CLLocationManagerDelegate, MKMapVi
 		self.setUpUI()
 		self.setUpLocationManager()
 
-		if let _ = Parking.sharedInstance.parkingLocation {
+    }
+
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+
+
+		if (Parking.sharedInstance.parkingActive == true) {
+
+			print(Parking.sharedInstance.parkingLocation?.coordinates?.latitude)
+			print(Parking.sharedInstance.parkingLocation?.coordinates?.longitude)
+
 			self.performSegueWithIdentifier("showParking", sender: self)
 		}
-    }
+	}
 
     // MARK: CLLocationManagerDelegate
     

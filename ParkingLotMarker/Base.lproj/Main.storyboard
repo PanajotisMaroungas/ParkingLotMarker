@@ -179,7 +179,7 @@
                         <outlet property="loadingIndicator" destination="QML-Ex-3Hh" id="6H5-qy-C31"/>
                         <outlet property="mapView" destination="oUe-9f-Ckv" id="hzO-N1-hIx"/>
                         <outlet property="modeSelector" destination="haa-9h-oct" id="eBE-xg-Det"/>
-                        <segue destination="c9k-gm-qfB" kind="show" identifier="showParking" id="Xox-jF-EJh"/>
+                        <segue destination="c9k-gm-qfB" kind="show" identifier="showParking" id="lNC-av-GEw"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -647,6 +647,6 @@
         <image name="tip" width="2000" height="2000"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Xox-jF-EJh"/>
+        <segue reference="lNC-av-GEw"/>
     </inferredMetricsTieBreakers>
 </document>
